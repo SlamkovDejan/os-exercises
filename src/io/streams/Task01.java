@@ -1,6 +1,14 @@
 package io.streams;
 
-// http://code.finki.ukim.mk/course/102/problem/5615/
+/*
+Да се напише Java програма која со користење на I/O стримови ќе ја прочита содржината на датотеката prevrteno_izvor.txt,
+а потоа нејзината содржина ќе ја испише превртена во празната датотека prevrteno_destinacija.txt.
+Читањето и запишувањето реализирајте го со стримови кои работат бајт по бајт.
+
+Пример:
+prevrteno_izvor.txt                   prevrteno_destinacija.txt
+Оперативни системи          иметсис инвитарепО
+ */
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +19,8 @@ public class Task01 {
 
     public static void main(String[] args) throws IOException {
 
-        String pathToSource = "src/io/data/izvor.txt";
-        String pathToDestination = "src/io/data/destinacija.txt";
+        String pathToSource = "src/io/data/prevrteno_izvor.txt";
+        String pathToDestination = "src/io/data/prevrteno_destinacija.txt";
 
         File src = new File(pathToSource);
         File dst = new File(pathToDestination);
@@ -23,7 +31,7 @@ public class Task01 {
         PrintWriter pw = null;
         try{
             raf = new RandomAccessFile(src, "r");
-            pw = new PrintWriter(dst);
+            pw = new PrintWriter(dst); // PrintWriter creates the file if it does not exist
             long size = src.length();
             for(long i=size-1; i>=0; i--){
                 raf.seek(i);

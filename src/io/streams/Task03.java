@@ -4,17 +4,21 @@ import java.io.*;
 
 public class Task03 {
 
+    /*
+    Со користење на I/O стримови ќе се чита датотеката 'samoglaski_izvor.txt', линија по линија, и после за секоја линија ќе го
+    запише бројот на повторувања на сомогласки во истата. Резултатот се запишува во "samoglaski_destinacija.txt"
+     */
     public static void samoglaski() throws IOException {
-        String pathToIzvor = "src/io/data/samoglaski.txt";
-        String destination = "src/io/data/samoglaski_destinacija.txt";
-        File izvor = new File(pathToIzvor);
-        File dest = new File(destination);
-        dest.createNewFile();
+        String pathToSource = "src/io/data/samoglaski_izvor.txt";
+        String pathToDestination = "src/io/data/samoglaski_destinacija.txt";
+        File source = new File(pathToSource);
+        File dest = new File(pathToDestination);
+        dest.createNewFile(); // you can skip this line because PrintWriter will create the file for you if it does not already exist
 
         BufferedReader bf = null;
         PrintWriter pw = null;
         try{
-            bf = new BufferedReader(new FileReader(izvor));
+            bf = new BufferedReader(new FileReader(source));
             pw = new PrintWriter(dest);
 
             String line = null;

@@ -44,7 +44,7 @@ public class Task01 {
     }
 
     public static void main(String[] args) {
-        String dirPath = "C:\\Users\\Slamkov\\Desktop\\Private Lessons\\OS\\threads\\src\\io\\data";
+        String dirPath = "src/io/data";
         System.out.println(averageSize(dirPath));
     }
 

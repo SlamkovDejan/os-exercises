@@ -7,9 +7,9 @@ import java.util.Date;
 public class FileUsage {
 
     private static File createFileObject(String parentDirPath, String name){
-        // FILE: 'path\to\parent' + '\' + 'file.txt' => 'path\to\parent\file.txt'
-        // FOLDER: 'path\to\parent' + '\' + 'dir' => 'path\to\parent\dir'
-        String path = parentDirPath + "\\" + name;
+        // FILE: 'path/to/parent' + '/' + 'file.txt' => 'path/to/parent/file.txt'
+        // FOLDER: 'path/to/parent' + '/' + 'dir' => 'path/to/parent/dir'
+        String path = parentDirPath + "/" + name;
         System.out.println("Creating a file object for: " + path);
 
         // multiple ways of creating a File object (depending on the information given)
@@ -47,8 +47,8 @@ public class FileUsage {
     }
 
     private static void fileManipulation() throws IOException {
-        // FILE: 'C:\Users\Slamkov\Desktop\Private Lessons\OS\threads\src\io\data\deki.txt'
-        String parentDirPath = "C:\\Users\\Slamkov\\Desktop\\Private Lessons\\OS\\threads\\src\\io\\data";
+        // FILE: 'src/io/data/deki.txt'
+        String parentDirPath = "src/io/data";
         String fileName = "deki.txt";
 
         File myFile = createFileObject(parentDirPath, fileName);
@@ -96,15 +96,15 @@ public class FileUsage {
         boolean successfullySet = myFile.setReadOnly(); // r--
 
         // deleting a file
-//        boolean successfulDeletion = myFile.delete();
-//        if(successfulDeletion) {
-//            System.out.printf("File (%s) was deleted successfully!\n", myFile.getAbsolutePath());
-//        } else {
-//            System.out.printf("File (%s) was NOT deleted successfully\n", myFile.getAbsolutePath());
-//        }
+        boolean successfulDeletion = myFile.delete();
+        if(successfulDeletion) {
+            System.out.printf("File (%s) was deleted successfully!\n", myFile.getAbsolutePath());
+        } else {
+            System.out.printf("File (%s) was NOT deleted successfully\n", myFile.getAbsolutePath());
+        }
 
          // moving a file (CUT-like operation)
-        String destinationFolderPath = "C:\\Users\\Slamkov\\Desktop\\Private Lessons\\OS\\threads\\src\\io";
+        String destinationFolderPath = "src/io";
         String newName = "deki_new.txt";
 //         String newName = myFile.getName();
         move(myFile, destinationFolderPath, newName);
@@ -112,7 +112,7 @@ public class FileUsage {
 
     private static void folderManipulation() throws IOException {
         // FOLDER: 'C:\Users\Slamkov\Desktop\Private Lessons\OS\threads\src\io\data\myFolder'
-        String parentDirPath = "C:\\Users\\Slamkov\\Desktop\\Private Lessons\\OS\\threads\\src\\io\\data";
+        String parentDirPath = "src/io/data";
         String folderName = "myFolder";
 
         File myFolder = createFileObject(parentDirPath, folderName);
@@ -174,7 +174,7 @@ public class FileUsage {
         }
 
         // moving a folder (CUT-like operation)
-        String destinationFolderPath = "C:\\Users\\Slamkov\\Desktop\\Private Lessons\\OS\\threads\\src\\data\\in\\deep";
+        String destinationFolderPath = "src/io/data/deep"; // 'deep' dir does not exist (.mkdirs() in move())
         String newName = "myFolder_new";
         // String newName = myFolder.getName();
         move(myFolder, destinationFolderPath, newName);

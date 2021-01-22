@@ -97,7 +97,7 @@ public class StreamsUsage {
         }
 
         // WRITING
-        // I always use 'PrintWriter' because it's similar to 'System.out'
+        // I always use 'PrintWriter' because it's similar to 'System.out' and has many constructors for many situations
         PrintWriter pw = null;
         try{
             pw = new PrintWriter("src/io/data/dummy_read.txt");
@@ -160,6 +160,11 @@ public class StreamsUsage {
             // writes multiple bytes
             out.write(buffer);
 
+            // the methods from 'InputStream' and 'OutputStream' and every class that inherits the methods from them,
+            // only know how to work with bytes, nothing else
+            // .read() -> reads one byte; .write(byte) -> writes one byte
+            // .read(byte[]); write(byte[]); skip(n) -> skips bytes
+
         } catch (Exception e){
             e.printStackTrace();
         } finally {
@@ -188,7 +193,7 @@ public class StreamsUsage {
         // byte array source
         try{
             // the argument is the size of the byte array on which this stream will write
-            // in this case it will create a byte array with 26 elements; byteArray = new byte[26];
+            // in this case the stream will create a byte array with 26 elements; byteArray = new byte[26];
             baos = new ByteArrayOutputStream(26);
             // filling the source (byteArray) with the alphabet
             // one character is one byte
@@ -198,6 +203,10 @@ public class StreamsUsage {
             }
             baos.flush(); // we must flush so that the stream actually writes the bytes on the array
             byte[] source = baos.toByteArray(); // retrieves the source, which is the byte array of 26 elements
+
+            // but wait, isn't the array ('source') still connected to the output stream? No close() has been called yet.
+            // - toByteArray() actually returns a copy (new reference) of the array in the output stream (as per the documentation)
+            // meaning it's safe to attach a stream to it
 
             // using the same byte array as the source for the input stream
             bais = new ByteArrayInputStream(source);
@@ -209,7 +218,7 @@ public class StreamsUsage {
             char a = (char) bais.read();
             char b = (char) bais.read();
 
-            // of course i can do this
+            // of course i can do this as well
             // reference of 'OutputStream' holds an object from 'ByteArrayOutputStream' (polymorphism): ByteArrayOutputStream extends OutputStream
             // the reference uses the source from the object it references, in this case a byte array
             os = new ByteArrayOutputStream(10);
@@ -218,12 +227,10 @@ public class StreamsUsage {
             // the next line will throw an exception because the byte array 'source' is still taken by another stream ('bais');
             // no 'close()' has been called on 'bais' previous to this line
             // to avoid the exception we need to change the source in the constructor with another byte array, which is not taken by some stream
+            // or make a copy of the source array: 'source.clone()'
             is = new ByteArrayInputStream(source);
 
             os.write((byte) '0'); // writes to the byte array with 10 elements
-
-            os.close();
-            is.close();
 
         } catch (Exception e){
             e.printStackTrace();
@@ -283,7 +290,7 @@ public class StreamsUsage {
             fis.skip(1); // REMINDER: one byte = one character
             char thirdCharacterFromFile = (char) fis.read();
 
-            // reading all the bytes from the stream (file)
+            // reading all the (remaining) bytes from the stream which has a file as a data source
             byte b;
             while ((b = (byte) fis.read()) != -1){ // traverse until we get -1, which means end of stream
                 // do something with the byte
@@ -299,7 +306,7 @@ public class StreamsUsage {
                 char characterFromFile = (char) b;
             }
 
-            // of course i can do this
+            // of course i can do this as well
             // reference of 'OutputStream' holds an object from 'FileOutputStream' (polymorphism): FileOutputStream extends OutputStream
             // but first i must change the data source (file) because the previous are still taken by other streams
             pathToInputFile = "path/to/some/other/file/input.txt";
@@ -354,7 +361,7 @@ public class StreamsUsage {
             bos = new BufferedOutputStream(new BufferedOutputStream(new ByteArrayOutputStream(26)));
 
             // Has the same methods as the parent 'OutputStream': .write(byte); .write(byte[]); ...
-            bos.write('c'); // writes the byte to the underlying stream (file, array, another special, ...)
+            bos.write((byte) 'c'); // writes the byte to the underlying stream (file, array, another special, ...)
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -375,11 +382,11 @@ public class StreamsUsage {
             // The constructor is the same as the buffered special stream
             dos = new DataOutputStream(new FileOutputStream("src/io/data/dummy_write.txt"));
 
-            // special methods provided by DataOutputStream (writes to the underlying stream, in this case a file stream)
+            // special methods are provided by DataOutputStream (writes to the underlying stream, in this case a file stream)
             // previously we only had the opportunity to only write bytes, so we needed to convert the types into bytes
             // this class does that for us
             dos.writeBoolean(true);
-            dos.writeChar('2'); // we can do this with 'write(byte)'
+            dos.writeChar('2');
             dos.writeUTF("String");
             dos.writeDouble(2.0);
             dos.writeInt(2);
@@ -427,9 +434,9 @@ public class StreamsUsage {
         try{
             w = new OutputStreamWriter(System.out);
             char[] charArr = new char[]{'D', 'e', 'k', 'i'};
-            w.write('a');
-            w.write(charArr);
-            w.write("Deki");
+            w.write('a'); // no need for converting
+            w.write(charArr); // char[] instead of byte[]
+            w.write("Deki"); // this method does not exist in the stream hierarchy, only in the writer hierarchy
 
 
             r = new InputStreamReader(System.in);
@@ -440,9 +447,11 @@ public class StreamsUsage {
             }
             else{
                 for(int i=0; i<numCharacterRead; i++){
-                    System.out.print(buffer[i]);
+                    char c = buffer[i];
                 }
             }
+
+            int b = r.read(); // but this method still returns int just like the streams .....
 
         } catch (Exception e){
             e.printStackTrace();
@@ -540,12 +549,12 @@ public class StreamsUsage {
         try{
             // similar like the special input streams, the special readers wrap another reader, i.e. a class that inherits from 'Reader'
             br = new BufferedReader(new FileReader("src/io/data/dummy_read.txt"));
-            // the same as the line above
+            // the same effect as the line above
             br = new BufferedReader(new InputStreamReader(new FileInputStream("src/io/data/dummy_read.txt")));
             br = new BufferedReader(new InputStreamReader(System.in));
 
             br.read(); // one byte; returns -1 if the end of the source has been reached
-            br.readLine(); // one line; returns null if the end of the source has been reached
+            br.readLine(); // one line; returns null if the end of the source has been reached (ONLY THIS CLASS HAS THIS METHOD)
 
             // similar like the special output streams, the special writers wrap another writer, i.e. a class that inherits from 'Writer'
             bw = new BufferedWriter(new FileWriter("src/io/data/dummy_read.txt", true));
@@ -591,8 +600,8 @@ public class StreamsUsage {
             // the previous four constructors construct a writer to the same file source, but with a different constructor
             // the writer (as constructed with the previous constructors) will erase the contents of the file source (if there's any) => append = false
             // if we want to write at the end of the file (not erase), we need to use one of the first two constructors and set (append = true)
-            // of course, the source can be other than a file, by using other output streams with the second constructor or
-            // other writers with the first constructor
+            // of course the source can be other than a file: with using other output streams with the second constructor or
+            // other writers with the first constructor; ex: ByteArrayOutputStream with the second constructor
 
             // a print writer object is very similar to the 'System.out' object
             pw.println("string");
@@ -615,8 +624,7 @@ public class StreamsUsage {
             String filePath = "src/io/data/dummy_read.txt";
             File fileObject = new File(filePath);
 
-            acf = new RandomAccessFile(filePath, "r"); // reading
-            acf = new RandomAccessFile(fileObject, "w"); // writing
+            acf = new RandomAccessFile(filePath, "r"); // only reading
             acf = new RandomAccessFile(fileObject, "rw"); // reading & writing
 
             // has the methods similar to 'DataInputStream'
@@ -638,6 +646,8 @@ public class StreamsUsage {
 
             acf.seek(10); // leaps 10 bytes forward from the beginning of the file
             acf.read(); // reads byte 11
+
+            // goes back and forth in the file, which is not allowed with other streams/readers/writers
 
         } catch (Exception e){
             e.printStackTrace();
