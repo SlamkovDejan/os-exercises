@@ -1,5 +1,5 @@
-# Operating Systems
-## Private lessons
+## Operating Systems
+### Private lessons
 
 This repository holds the code from the private lessons held by me for the 'Operating Systems' course from FCSE - Skopje.
 The code consists of solved exercises and helpful code for mastering some of the basic concepts covered in the mentioned course.
